@@ -45,6 +45,9 @@ function drawScene() {
          1.0, -1.0,  0.0
     ];
 
+	// You have to use an FBO!
+	// AND
+	// You have to provide vertex / fragment shaders
 }
 
 // Global timer
