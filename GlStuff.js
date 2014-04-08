@@ -29,15 +29,16 @@ function initGL(canvas) {
 
 function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clearColor(0, 0, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-
-    mat4.identity(mvMatrix);
-
-    mat4.translate(mvMatrix, [0.0, 0.0, -7.0]);
-
-    mat4.rotate(mvMatrix, degToRad(angle), [0, 0, 1]);
+//    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+//
+//    mat4.identity(mvMatrix);
+//
+//    mat4.translate(mvMatrix, [0.0, 0.0, -7.0]);
+//
+//    mat4.rotate(mvMatrix, degToRad(angle), [0, 0, 1]);
     // draw object
     var vertices = [
          0.0,  1.0,  0.0,
@@ -52,6 +53,7 @@ function drawScene() {
 
 // Global timer
 var lastTime = 0;
+var angle = 0;
 
 function animate() {
     var timeNow = new Date().getTime();
@@ -65,8 +67,8 @@ function animate() {
 }
 
 
-function tick() {
-    requestAnimFrame(tick);
+function tick(timestamp) {
     drawScene();
     animate();
+    requestAnimationFrame(tick);
 }
