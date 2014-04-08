@@ -32,13 +32,19 @@ function drawScene() {
     gl.clearColor(0, 0, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-//    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-//
-//    mat4.identity(mvMatrix);
-//
-//    mat4.translate(mvMatrix, [0.0, 0.0, -7.0]);
-//
-//    mat4.rotate(mvMatrix, degToRad(angle), [0, 0, 1]);
+    var mvMatrix = mat4.create();
+    var pMatrix = mat4.create();
+
+    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -7.0]);
+    mat4.rotate(mvMatrix, mvMatrix, (angle * 3.14159 / 180.0), [0, 0, 1]);
+
+    // Set GL matrices to those calculated
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    
     // draw object
     var vertices = [
          0.0,  1.0,  0.0,
