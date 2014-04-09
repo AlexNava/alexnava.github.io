@@ -17,7 +17,7 @@ function webGLStart() {
 
 function initGL(canvas) {
     try {
-        gl = canvas.getContext("experimental-webgl");
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
         
@@ -100,10 +100,10 @@ function drawScene() {
     var mvMatrix = mat4.create();
     var pMatrix = mat4.create();
 
-    mat4.perspective(pMatrix, 60, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
     mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -1.0]);
+    mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
     mat4.rotate(mvMatrix, mvMatrix, (angle * 3.14159 / 180.0), [0, 0, 1]);
 
     gl.useProgram(basicShaderProgram);
