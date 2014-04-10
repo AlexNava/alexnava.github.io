@@ -93,7 +93,7 @@ function drawScene() {
     // You have to use an FBO!
 	// AND
 	// You have to provide vertex / fragment shaders
-    
+
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clearColor(0.5, 0.5, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -112,13 +112,13 @@ function drawScene() {
     // Set GL matrices to those calculated
     gl.uniformMatrix4fv(basicShaderProgram.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(basicShaderProgram.mvMatrixUniform, false, mvMatrix);
-    
+
     // draw object
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
     gl.vertexAttribPointer(basicShaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
     gl.vertexAttribPointer(basicShaderProgram.vertexColorAttribute, triangleVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    
+
     gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 }
 
@@ -130,7 +130,7 @@ function animate() {
     var timeNow = new Date().getTime();
     if (lastTime != 0) {
         var elapsed = timeNow - lastTime;
-        
+
         // Update stuff based on timers
         angle += elapsed * 60.0 * 0.001;
     }
