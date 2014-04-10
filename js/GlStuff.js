@@ -3,12 +3,13 @@ var gl;
 var triangleVertexPositionBuffer;
 var triangleVertexColorBuffer;
 var basicShaderProgram;
+var mainCanvas;
 
 function webGLStart() {
-    var canvas = document.getElementById("WebGL-test0");
+    mainCanvas = document.getElementById("MainCanvas");
 
     try {
-        initGL(canvas);
+        initGL(mainCanvas);
     } catch (exception) {
         alert('Error while booting WebGL: ' + exception);
     }
@@ -20,11 +21,18 @@ function webGLStart() {
     tick();
 }
 
+var mvMatrix;
+var pMatrix;
+
 function initGL(canvas) {
     gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-    gl.viewportWidth = canvas.width;
-    gl.viewportHeight = canvas.height;
+    //gl.viewportWidth = canvas.width;
+    //gl.viewportHeight = canvas.height;
 
+    // Init matrices
+    mvMatrix = mat4.create();
+    pMatrix = mat4.create();
+    
     // Init buffer objects
     triangleVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
@@ -89,19 +97,31 @@ function initGL(canvas) {
     }
 }
 
+var lastSizeW = 0;
+var lastSizeH = 0;
+function checkCanvasResize(canvas, projMatrix) {
+    if ((canvas.width !== lastSizeW) || (canvas.height !== lastSizeH))
+    {
+        lastSizeH = canvas.height;
+        lastSizeW = canvas.width;
+        gl.viewport(0, 0, lastSizeW, lastSizeH);
+        mat4.identity(projMatrix);
+        mat4.perspective(projMatrix, 45, lastSizeW / lastSizeH, 0.1, 100.0);
+    }
+}
+
 function drawScene() {
     // You have to use an FBO!
 	// AND
 	// You have to provide vertex / fragment shaders
 
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    checkCanvasResize(mainCanvas, pMatrix);
+    
+    //gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    //mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    
     gl.clearColor(0.5, 0.5, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    var mvMatrix = mat4.create();
-    var pMatrix = mat4.create();
-
-    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
 
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
