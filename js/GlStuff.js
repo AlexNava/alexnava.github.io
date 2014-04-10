@@ -1,145 +1,155 @@
-// Global GL object
-var gl;
-var triangleVertexPositionBuffer;
-var triangleVertexColorBuffer;
-var basicShaderProgram;
+var webGLApp = function() {
+    this.setup();
+}
 
-function webGLStart() {
-    var canvas = document.getElementById("WebGL-test0");
+webGLApp.prototype.setup = function() {
+    // Global timer
+    this.timer = {
+        lastTime: 0
+    }
+
+    this.angle = 0;
+
+    this.triangleVertexPositionBuffer = null;
+    this.triangleVertexColorBuffer = null;
+    this.basicShaderProgram = null;
+
+    this.canvas = document.getElementById("WebGL-test0");
 
     try {
-        initGL(canvas);
+        this.initGL(this.canvas);
     } catch (exception) {
         alert('Error while booting WebGL: ' + exception);
     }
 
-    gl.clearColor(0.5, 0.5, 0.5, 1.0);
-    gl.enable(gl.DEPTH_TEST);
-
-    // Start looping
-    tick();
+    this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
+    this.gl.enable(this.gl.DEPTH_TEST);
 }
 
-function initGL(canvas) {
-    gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-    gl.viewportWidth = canvas.width;
-    gl.viewportHeight = canvas.height;
+webGLApp.prototype.initGL = function() {
+    this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webthis.gl");
+    this.gl.viewportWidth = this.canvas.width;
+    this.gl.viewportHeight = this.canvas.height;
 
+    this.initBuffers();
+    this.initShaders();
+
+    if (!this.gl) {
+        alert("Could not initialise WebGL, sorry :-(");
+    }
+}
+
+webGLApp.prototype.initBuffers = function() {
     // Init buffer objects
-    triangleVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    this.triangleVertexPositionBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
     var vertices = [
          0.0,  1.0, 0.0, 1.0,
         -0.87, -0.5, 0.0, 1.0,
          0.87, -0.5, 0.0, 1.0
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    triangleVertexPositionBuffer.itemSize = 4;
-    triangleVertexPositionBuffer.numItems = 3;
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
+    this.triangleVertexPositionBuffer.itemSize = 4;
+    this.triangleVertexPositionBuffer.numItems = 3;
 
-    triangleVertexColorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
+    this.triangleVertexColorBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexColorBuffer);
     var colors = [
         1.0, 0.0, 0.0, 1.0,
         0.0, 1.0, 0.0, 1.0,
         0.0, 0.0, 1.0, 1.0
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    triangleVertexColorBuffer.itemSize = 4;
-    triangleVertexColorBuffer.numItems = 3;
-
-    // Init shaders
-    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-
-    gl.shaderSource(vertexShader, BasicVertexShader);
-    gl.compileShader(vertexShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(vertexShader));
-    }
-
-    gl.shaderSource(fragmentShader, BasicFragmentShader);
-    gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(fragmentShader));
-    }
-
-    basicShaderProgram = gl.createProgram();
-    gl.attachShader(basicShaderProgram, vertexShader);
-    gl.attachShader(basicShaderProgram, fragmentShader);
-    gl.linkProgram(basicShaderProgram);
-
-    if (!gl.getProgramParameter(basicShaderProgram, gl.LINK_STATUS)) {
-      alert("Could not initialise shaders");
-    }
-
-    gl.useProgram(basicShaderProgram);
-
-    basicShaderProgram.vertexPositionAttribute = gl.getAttribLocation(basicShaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(basicShaderProgram.vertexPositionAttribute);
-
-    basicShaderProgram.vertexColorAttribute = gl.getAttribLocation(basicShaderProgram, "aVertexColor");
-    gl.enableVertexAttribArray(basicShaderProgram.vertexColorAttribute);
-
-    basicShaderProgram.pMatrixUniform = gl.getUniformLocation(basicShaderProgram, "uPMatrix");
-    basicShaderProgram.mvMatrixUniform = gl.getUniformLocation(basicShaderProgram, "uMVMatrix");
-
-    if (!gl) {
-        alert("Could not initialise WebGL, sorry :-(");
-    }
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(colors), this.gl.STATIC_DRAW);
+    this.triangleVertexColorBuffer.itemSize = 4;
+    this.triangleVertexColorBuffer.numItems = 3;
 }
 
-function drawScene() {
+webGLApp.prototype.initShaders = function() {
+    // Init shaders
+    var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+    var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+
+    this.gl.shaderSource(vertexShader, BasicVertexShader);
+    this.gl.compileShader(vertexShader);
+    if (!this.gl.getShaderParameter(vertexShader, this.gl.COMPILE_STATUS)) {
+        alert(this.gl.getShaderInfoLog(vertexShader));
+    }
+
+    this.gl.shaderSource(fragmentShader, BasicFragmentShader);
+    this.gl.compileShader(fragmentShader);
+    if (!this.gl.getShaderParameter(fragmentShader, this.gl.COMPILE_STATUS)) {
+        alert(this.gl.getShaderInfoLog(fragmentShader));
+    }
+
+    this.basicShaderProgram = this.gl.createProgram();
+    this.gl.attachShader(this.basicShaderProgram, vertexShader);
+    this.gl.attachShader(this.basicShaderProgram, fragmentShader);
+    this.gl.linkProgram(this.basicShaderProgram);
+
+    if (!this.gl.getProgramParameter(this.basicShaderProgram, this.gl.LINK_STATUS)) {
+      throw "Could not initialise shaders";
+    }
+
+    this.gl.useProgram(this.basicShaderProgram);
+
+    this.basicShaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(this.basicShaderProgram, "aVertexPosition");
+    this.gl.enableVertexAttribArray(this.basicShaderProgram.vertexPositionAttribute);
+
+    this.basicShaderProgram.vertexColorAttribute = this.gl.getAttribLocation(this.basicShaderProgram, "aVertexColor");
+    this.gl.enableVertexAttribArray(this.basicShaderProgram.vertexColorAttribute);
+
+    this.basicShaderProgram.pMatrixUniform = this.gl.getUniformLocation(this.basicShaderProgram, "uPMatrix");
+    this.basicShaderProgram.mvMatrixUniform = this.gl.getUniformLocation(this.basicShaderProgram, "uMVMatrix");
+}
+
+webGLApp.prototype.drawScene = function() {
     // You have to use an FBO!
 	// AND
 	// You have to provide vertex / fragment shaders
 
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clearColor(0.5, 0.5, 0.5, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
+    this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     var mvMatrix = mat4.create();
     var pMatrix = mat4.create();
 
-    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.perspective(pMatrix, 45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
 
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
-    mat4.rotate(mvMatrix, mvMatrix, (angle * 3.14159 / 180.0), [0, 0, 1]);
+    mat4.rotate(mvMatrix, mvMatrix, (this.angle * 3.14159 / 180.0), [0, 0, 1]);
 
-    gl.useProgram(basicShaderProgram);
+    this.gl.useProgram(this.basicShaderProgram);
 
     // Set GL matrices to those calculated
-    gl.uniformMatrix4fv(basicShaderProgram.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(basicShaderProgram.mvMatrixUniform, false, mvMatrix);
+    this.gl.uniformMatrix4fv(this.basicShaderProgram.pMatrixUniform, false, pMatrix);
+    this.gl.uniformMatrix4fv(this.basicShaderProgram.mvMatrixUniform, false, mvMatrix);
 
     // draw object
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-    gl.vertexAttribPointer(basicShaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-    gl.vertexAttribPointer(basicShaderProgram.vertexColorAttribute, triangleVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
+    this.gl.vertexAttribPointer(this.basicShaderProgram.vertexPositionAttribute, this.triangleVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexColorBuffer);
+    this.gl.vertexAttribPointer(this.basicShaderProgram.vertexColorAttribute, this.triangleVertexColorBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
 
-    gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.triangleVertexPositionBuffer.numItems);
 }
 
-// Global timer
-var lastTime = 0;
-var angle = 0;
-
-function animate() {
+webGLApp.prototype.animate = function() {
     var timeNow = new Date().getTime();
-    if (lastTime != 0) {
-        var elapsed = timeNow - lastTime;
+    if (this.timer.lastTime != 0) {
+        var elapsed = timeNow - this.timer.lastTime;
 
         // Update stuff based on timers
-        angle += elapsed * 60.0 * 0.001;
+        this.angle += elapsed * 60.0 * 0.001;
     }
-    lastTime = timeNow;
+    this.timer.lastTime = timeNow;
 }
 
+webGLApp.prototype.tick = function(timestamp) {
+    this.drawScene();
+    this.animate();
 
-function tick(timestamp) {
-    drawScene();
-    animate();
-    requestAnimationFrame(tick);
+    // bind .tick() with the appropriate execution context
+    requestAnimationFrame(this.tick.bind(this));
 }
