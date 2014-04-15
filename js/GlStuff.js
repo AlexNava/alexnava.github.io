@@ -15,7 +15,7 @@ webGLApp.prototype.setup = function() {
     this.triangleVertexColorBuffer = null;
     this.basicShaderProgram = null;
 
-    this.canvas = document.getElementById("WebGL-test0");
+    this.canvas = document.getElementById("MainCanvas");
 
     try {
         this.initGL(this.canvas);
@@ -25,6 +25,10 @@ webGLApp.prototype.setup = function() {
 
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.enable(this.gl.DEPTH_TEST);
+    
+    this.mvMatrix = mat4.create();
+    this.pMatrix = mat4.create();
+    
 }
 
 webGLApp.prototype.initGL = function() {
@@ -109,12 +113,13 @@ webGLApp.prototype.initShaders = function() {
 
 var lastSizeW = 0;
 var lastSizeH = 0;
-function checkCanvasResize(canvas, projMatrix) {
+
+webGLApp.prototype.checkCanvasResize = function(canvas, projMatrix) {
     if ((canvas.width !== lastSizeW) || (canvas.height !== lastSizeH))
     {
         lastSizeH = canvas.height;
         lastSizeW = canvas.width;
-        gl.viewport(0, 0, lastSizeW, lastSizeH);
+        this.gl.viewport(0, 0, lastSizeW, lastSizeH);
         mat4.identity(projMatrix);
         mat4.perspective(projMatrix, 45, lastSizeW / lastSizeH, 0.1, 100.0);
     }
@@ -125,15 +130,11 @@ webGLApp.prototype.drawScene = function() {
 	// AND
 	// You have to provide vertex / fragment shaders
 
-    this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    var mvMatrix = mat4.create();
-    var pMatrix = mat4.create();
-
-    mat4.perspective(pMatrix, 45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
-
+    this.checkCanvasResize(this.canvas, pMatrix);
+    
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
     mat4.rotate(mvMatrix, mvMatrix, (this.angle * 3.14159 / 180.0), [0, 0, 1]);
