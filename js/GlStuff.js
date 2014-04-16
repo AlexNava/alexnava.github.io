@@ -32,7 +32,7 @@ webGLApp.prototype.setup = function() {
 }
 
 webGLApp.prototype.initGL = function() {
-    this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webthis.gl");
+    this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webgl");
     this.gl.viewportWidth = this.canvas.width;
     this.gl.viewportHeight = this.canvas.height;
 
