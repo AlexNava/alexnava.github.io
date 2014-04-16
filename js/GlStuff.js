@@ -114,11 +114,15 @@ webGLApp.prototype.initShaders = function() {
 var lastSizeW = 0;
 var lastSizeH = 0;
 
-webGLApp.prototype.checkCanvasResize = function(canvas, projMatrix) {
-    if ((canvas.width !== lastSizeW) || (canvas.height !== lastSizeH))
+webGLApp.prototype.checkResize = function(canvas, projMatrix) {
+    //if ((canvas.width !== lastSizeW) || (canvas.height !== lastSizeH))
+    if ((document.body.clientWidth !== lastSizeW) || (document.body.clientHeight !== lastSizeH))
     {
-        lastSizeH = canvas.height;
-        lastSizeW = canvas.width;
+        lastSizeH = document.body.clientHeight;
+        lastSizeW = document.body.clientWidth;
+        
+        canvas.width = lastSizeW;
+        canvas.height = lastSizeH;
         this.gl.viewport(0, 0, lastSizeW, lastSizeH);
         mat4.identity(projMatrix);
         mat4.perspective(projMatrix, 45, lastSizeW / lastSizeH, 0.1, 100.0);
@@ -133,7 +137,7 @@ webGLApp.prototype.drawScene = function() {
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.checkCanvasResize(this.canvas, pMatrix);
+    this.checkResize(this.canvas, pMatrix);
     
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
