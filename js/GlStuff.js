@@ -133,12 +133,11 @@ webGLApp.prototype.drawScene = function() {
     // You have to use an FBO!
 	// AND
 	// You have to provide vertex / fragment shaders
+    this.checkResize(this.canvas, pMatrix);
 
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.checkResize(this.canvas, pMatrix);
-    
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
     mat4.rotate(mvMatrix, mvMatrix, (this.angle * 3.14159 / 180.0), [0, 0, 1]);
