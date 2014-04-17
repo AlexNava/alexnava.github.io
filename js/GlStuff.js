@@ -46,8 +46,8 @@ webGLApp.prototype.initGL = function() {
 
 webGLApp.prototype.initBuffers = function() {
     // Init matrices
-    mvMatrix = mat4.create();
-    pMatrix = mat4.create();
+    this.mvMatrix = mat4.create();
+    this.pMatrix = mat4.create();
     
     // Init buffer objects
     this.triangleVertexPositionBuffer = this.gl.createBuffer();
@@ -137,17 +137,17 @@ webGLApp.prototype.drawScene = function() {
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.checkResize(this.canvas, pMatrix);
+    this.checkResize(this.canvas, this.pMatrix);
     
-    mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, mvMatrix, [0.0, 0.0, -2.0]);
-    mat4.rotate(mvMatrix, mvMatrix, (this.angle * 3.14159 / 180.0), [0, 0, 1]);
+    mat4.identity(this.mvMatrix);
+    mat4.translate(this.mvMatrix, this.mvMatrix, [0.0, 0.0, -2.0]);
+    mat4.rotate(this.mvMatrix, this.mvMatrix, (this.angle * 3.14159 / 180.0), [0, 0, 1]);
 
     this.gl.useProgram(this.basicShaderProgram);
 
     // Set GL matrices to those calculated
-    this.gl.uniformMatrix4fv(this.basicShaderProgram.pMatrixUniform, false, pMatrix);
-    this.gl.uniformMatrix4fv(this.basicShaderProgram.mvMatrixUniform, false, mvMatrix);
+    this.gl.uniformMatrix4fv(this.basicShaderProgram.pMatrixUniform, false, this.pMatrix);
+    this.gl.uniformMatrix4fv(this.basicShaderProgram.mvMatrixUniform, false, this.mvMatrix);
 
     // draw object
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
