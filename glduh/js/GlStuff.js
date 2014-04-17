@@ -1,11 +1,13 @@
-var webGLApp = function() {
+var webGLApp = function()
+{
     this.setup();
 }
-var mainCanvas;
 
-webGLApp.prototype.setup = function() {
+webGLApp.prototype.setup = function()
+{
     // Global timer
-    this.timer = {
+    this.timer =
+    {
         lastTime: 0
     }
 
@@ -15,11 +17,14 @@ webGLApp.prototype.setup = function() {
     this.triangleVertexColorBuffer = null;
     this.basicShaderProgram = null;
 
-    this.canvas = document.getElementById("MainCanvas");
+    this.mainCanvas = document.getElementById("MainCanvas");
 
-    try {
-        this.initGL(this.canvas);
-    } catch (exception) {
+    try
+    {
+        this.initGL(this.mainCanvas);
+    }
+    catch (exception)
+    {
         alert('Error while booting WebGL: ' + exception);
     }
 
@@ -31,20 +36,23 @@ webGLApp.prototype.setup = function() {
     
 }
 
-webGLApp.prototype.initGL = function() {
-    this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webgl");
-    this.gl.viewportWidth = this.canvas.width;
-    this.gl.viewportHeight = this.canvas.height;
+webGLApp.prototype.initGL = function()
+{
+    this.gl = this.mainCanvas.getContext("webgl") || this.mainCanvas.getContext("experimental-webgl");
+    this.gl.viewportWidth = this.mainCanvas.width;
+    this.gl.viewportHeight = this.mainCanvas.height;
 
     this.initBuffers();
     this.initShaders();
 
-    if (!this.gl) {
+    if (!this.gl)
+    {
         alert("Could not initialise WebGL, sorry :-(");
     }
 }
 
-webGLApp.prototype.initBuffers = function() {
+webGLApp.prototype.initBuffers = function()
+{
     // Init matrices
     this.mvMatrix = mat4.create();
     this.pMatrix = mat4.create();
@@ -73,20 +81,23 @@ webGLApp.prototype.initBuffers = function() {
     this.triangleVertexColorBuffer.numItems = 3;
 }
 
-webGLApp.prototype.initShaders = function() {
+webGLApp.prototype.initShaders = function()
+{
     // Init shaders
     var vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
     var fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
 
     this.gl.shaderSource(vertexShader, BasicVertexShader);
     this.gl.compileShader(vertexShader);
-    if (!this.gl.getShaderParameter(vertexShader, this.gl.COMPILE_STATUS)) {
+    if (!this.gl.getShaderParameter(vertexShader, this.gl.COMPILE_STATUS))
+    {
         alert(this.gl.getShaderInfoLog(vertexShader));
     }
 
     this.gl.shaderSource(fragmentShader, BasicFragmentShader);
     this.gl.compileShader(fragmentShader);
-    if (!this.gl.getShaderParameter(fragmentShader, this.gl.COMPILE_STATUS)) {
+    if (!this.gl.getShaderParameter(fragmentShader, this.gl.COMPILE_STATUS))
+    {
         alert(this.gl.getShaderInfoLog(fragmentShader));
     }
 
@@ -95,8 +106,9 @@ webGLApp.prototype.initShaders = function() {
     this.gl.attachShader(this.basicShaderProgram, fragmentShader);
     this.gl.linkProgram(this.basicShaderProgram);
 
-    if (!this.gl.getProgramParameter(this.basicShaderProgram, this.gl.LINK_STATUS)) {
-      throw "Could not initialise shaders";
+    if (!this.gl.getProgramParameter(this.basicShaderProgram, this.gl.LINK_STATUS))
+    {
+        throw "Could not initialise shaders";
     }
 
     this.gl.useProgram(this.basicShaderProgram);
@@ -114,7 +126,8 @@ webGLApp.prototype.initShaders = function() {
 var lastSizeW = 0;
 var lastSizeH = 0;
 
-webGLApp.prototype.checkResize = function(canvas, projMatrix) {
+webGLApp.prototype.checkResize = function(canvas, projMatrix)
+{
     //if ((canvas.width !== lastSizeW) || (canvas.height !== lastSizeH))
     if ((document.body.clientWidth !== lastSizeW) || (document.body.clientHeight !== lastSizeH))
     {
@@ -129,11 +142,12 @@ webGLApp.prototype.checkResize = function(canvas, projMatrix) {
     }
 }
 
-webGLApp.prototype.drawScene = function() {
+webGLApp.prototype.drawScene = function()
+{
     // You have to use an FBO!
-	// AND
-	// You have to provide vertex / fragment shaders
-    this.checkResize(this.canvas, this.pMatrix);
+    // AND
+    // You have to provide vertex / fragment shaders
+    this.checkResize(this.mainCanvas, this.pMatrix);
 
     this.gl.clearColor(0.5, 0.5, 0.5, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
@@ -157,9 +171,11 @@ webGLApp.prototype.drawScene = function() {
     this.gl.drawArrays(this.gl.TRIANGLES, 0, this.triangleVertexPositionBuffer.numItems);
 }
 
-webGLApp.prototype.animate = function() {
+webGLApp.prototype.animate = function()
+{
     var timeNow = new Date().getTime();
-    if (this.timer.lastTime != 0) {
+    if (this.timer.lastTime != 0)
+    {
         var elapsed = timeNow - this.timer.lastTime;
 
         // Update stuff based on timers
@@ -168,7 +184,8 @@ webGLApp.prototype.animate = function() {
     this.timer.lastTime = timeNow;
 }
 
-webGLApp.prototype.tick = function(timestamp) {
+webGLApp.prototype.tick = function(timestamp)
+{
     this.drawScene();
     this.animate();
 
